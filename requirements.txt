@@ -8,12 +8,13 @@ ipython-genutils==0.2.0
 pathlib2==2.3.0
 pexpect==4.3.1
 pickleshare==0.7.4
-plyvel==0.9
+plyvel==1.0.5
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 pycodestyle==2.3.1
 pycparser==2.18
 Pygments==2.2.0
+pycoin==0.80
 scandir==1.6
 secp256k1==0.13.2
 simplegeneric==0.8.1
