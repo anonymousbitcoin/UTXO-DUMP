@@ -152,6 +152,38 @@ class JoinSplit(object):
             proof,
             ciphertexts,
         )
+    def __repr__(self):
+        nullset = ""
+        for i in self.nullifiers:
+            nullset += hexlify(i) + "\n\t"
+        
+        commitset = ""
+        for i in self.commitments:
+            commitset += hexlify(i) + "\n\t"
+
+        macsset = ""
+        for i in self.macs:
+            macsset += hexlify(i) + "\n\t"
+
+        ciphertextsset = ""
+        for i in self.ciphertexts:
+            ciphertextsset += hexlify(i) + "\n\t"
+
+        proofset = ""
+        for i in self.proof:
+            proofj= ""
+            for j in i:
+                proofj += hexlify(j)
+            proofset += proofj
+        
+        return "Joinsplit: \n\tvpub_old: %s\n\tvpub_new: %s\n\tanchor: %s\n\tephemeral_key: %s\n\trandom_seed: %s" % (self.vpub_old, self.vpub_new, hexlify(self.anchor),  hexlify(self.ephemeral_key), hexlify(self.random_seed)) + (" \nnullifiers: \n\t") + nullset + (" \ncommitments: \n\t") + commitset + (" \nmacs: \n\t") + macsset + (" \nciphertext: \n\t") + ciphertextsset + (" \nproof: \n\t") + proofset
+        # self.nullifiers = nullifiers
+        # self.commitments = commitments
+        # self.ephemeral_key = ephemeral_key
+        # self.random_seed = random_seed
+        # self.macs = macs
+        # self.proof = proof
+        # self.ciphertexts = ciphertexts
 
 
 class Transaction(object):
@@ -189,6 +221,8 @@ class Transaction(object):
         return Transaction(
             version, vin, vout, locktime, joinsplits, joinsplit_pubkey, joinsplit_sig
         )
+    def __repr__(self):
+        return "\t ----- version: %s \n\ttime lock: %s" % (self.version, self.lock_time) + "\n" + ", ".join(map(str, self.vjoinsplit))
 
 
 class BlockHeader(object):
@@ -236,7 +270,7 @@ class Block(object):
 
         return Block(header, transactions)
     def __repr__(self):
-        return "Block header: \n%s" % (self.header)
+        return "Block header: \n%s" % (self.header) + "Transactions: \n" + ", ".join(map(str, self.transactions))
     
 
 
