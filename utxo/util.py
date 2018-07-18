@@ -36,6 +36,7 @@ def read_utxo_file(f):
 
 def new_utxo_file(output_dir, k):
     p = utxo_file_name(output_dir, k)
+    print(p)
     return open(p, "wb")
 
 

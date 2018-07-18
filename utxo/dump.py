@@ -10,6 +10,7 @@ from pycoin.encoding import a2b_hashed_base58
 from utxo.chainstate import ldb_iter
 from utxo.script import unwitness
 from utxo.util import new_utxo_file, utxo_file_name
+from blockdb import read_blockfile 
 
 
 def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
@@ -22,12 +23,15 @@ def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
 
 def dump_utxos(datadir, output_dir, n, convert_segwit,
                maxT=0, debug=True, vmcp_file=None):
+    # read_blockfile("/Users/nlevo/Desktop/Crypto/utxo-dump/z-blocks/blocks/blk00000.dat", bytearray.fromhex('24 e9 27 64'))
+    read_blockfile("/Users/nlevo/Desktop/Crypto/utxo-dump/z-blocks/blocks/blk00000.dat", bytearray.fromhex('fa 1a f9 bf'))
 
     i = 0
     k = 1
 
     print('new file')
     f = new_utxo_file(output_dir, k)
+    print('new_utxo_file path: ', f)
     for value in ldb_iter(datadir):
 
         tx_hash, height, index, amt, script = value
@@ -56,6 +60,7 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
 
     f.close()
     print 'BEFORE WRITING TO vmcp_file'
+    print(output_dir)
     write_vmcp_data(output_dir, k + 1, vmcp_file)
 
 
