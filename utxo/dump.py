@@ -37,6 +37,7 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         if debug:
             print(k, i, hexlify(tx_hash[::-1]), height, index,
                   amt, hexlify(script))
+            print(value)
 
         f.write(struct.pack('<QQ', amt, len(script)))
         f.write(script)
@@ -54,6 +55,7 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
             break
 
     f.close()
+    print 'BEFORE WRITING TO vmcp_file'
     write_vmcp_data(output_dir, k + 1, vmcp_file)
 
 
