@@ -221,9 +221,9 @@ class BlockHeader(object):
         )
     def __repr__(self):
         # return f"{hexlify(bytes(reversed(self.hash)))}:{self.n}"
-        # return "(version: %s\n previous hash: %s\n, merkle root hash: %s\n extra hash: %s\n time: %s\n bits: %s\n nonce: %s\n solution: %s \n)" % (self.version, self.hash_prev, self.hash_root, self.hash_extra, self.time, self.bits, self.nonce, self.solution)
+        return "version: \t%s\n previous hash: \t%s\n, merkle root hash: %s\n extra hash: %s\n time: %s\n bits: %s\n nonce: %s\n solution: %s \n" % (hexlify(self.version), hexlify(self.hash_prev), hexlify(self.hash_root), hexlify(self.hash_extra), hexlify(self.time), hexlify(self.bits), hexlify(self.nonce), hexlify(self.solution))
         # return struct.unpack("!f", hexlify(bytes(reversed(self.hash))).decode('hex'))[0]
-        return "(version: %s\n previous hash: %s\n, merkle root hash: %s\n extra hash: %s\n time: %s\n bits: %s\n nonce: %s\n solution: %s \n)" % (struct.unpack("!f", hexlify(bytes(reversed(self.version))).decode('hex'))[0], struct.unpack("!f", hexlify(bytes(reversed(self.hash_prev))).decode('hex'))[0], self.hash_root, self.hash_extra, self.time, self.bits, self.nonce, self.solution)
+        # return "(version: %s\n previous hash: %s\n, merkle root hash: %s\n extra hash: %s\n time: %s\n bits: %s\n nonce: %s\n solution: %s \n)" % (struct.unpack("!f", hexlify(bytes(reversed(self.version))).decode('hex'))[0], struct.unpack("!f", hexlify(bytes(reversed(self.hash_prev))).decode('hex'))[0], self.hash_root, self.hash_extra, self.time, self.bits, self.nonce, self.solution)
 
 
 class Block(object):
@@ -239,7 +239,7 @@ class Block(object):
 
         return Block(header, transactions)
     def __repr__(self):
-        return "(Block header: \n%s)" % (self.header)
+        return "Block header: \n%s" % (self.header)
     
 
 
