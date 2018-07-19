@@ -177,13 +177,6 @@ class JoinSplit(object):
             proofset += proofj
         
         return "Joinsplit: \n\tvpub_old: %s\n\tvpub_new: %s\n\tanchor: %s\n\tephemeral_key: %s\n\trandom_seed: %s" % (self.vpub_old, self.vpub_new, hexlify(self.anchor),  hexlify(self.ephemeral_key), hexlify(self.random_seed)) + (" \nnullifiers: \n\t") + nullset + (" \ncommitments: \n\t") + commitset + (" \nmacs: \n\t") + macsset + (" \nciphertext: \n\t") + ciphertextsset + (" \nproof: \n\t") + proofset
-        # self.nullifiers = nullifiers
-        # self.commitments = commitments
-        # self.ephemeral_key = ephemeral_key
-        # self.random_seed = random_seed
-        # self.macs = macs
-        # self.proof = proof
-        # self.ciphertexts = ciphertexts
 
 
 class Transaction(object):
@@ -264,11 +257,10 @@ class Block(object):
 
     @classmethod
     def from_bytes(cls, stream):
-
         header = BlockHeader.from_bytes(stream)
         transactions = read_vector(stream, Transaction.from_bytes, "Transaction")
-
         return Block(header, transactions)
+
     def __repr__(self):
         return "Block header: \n%s" % (self.header) + "Transactions: \n" + ", ".join(map(str, self.transactions))
     
@@ -284,8 +276,6 @@ def read_blockfile(name, expected_prefix):
 
         while len(magic):
             #check magic matches expected magic
-            # print("Magic in block: ", magic)
-            # print("Expected magic in block: ", expected_prefix)
             assert magic == expected_prefix
 
             #TODO Compare size and raw_block
@@ -293,14 +283,21 @@ def read_blockfile(name, expected_prefix):
             size, = unpack("<I", f.read(4))
             #Take raw int, and transform to string as raw_block?
             raw_block = io.BytesIO(f.read(size))
-            #
-            ret.append(Block.from_bytes(raw_block))
+            # ret.append(Block.from_bytes(raw_block))
 
+            block = Block.from_bytes(raw_block)
+            # print(block)
+
+            # append only joinsplits
+            for i in block.transactions:
+                for j in i.vjoinsplit:
+                        ret.append(j)
+                        print(ret[-1])
+            
+            # handle next magic
             magic = f.read(len(expected_prefix))
-            print(ret[-1])
-
+            
     return ret
-
 
 
 
