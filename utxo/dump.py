@@ -10,7 +10,7 @@ from pycoin.encoding import a2b_hashed_base58
 from utxo.chainstate import ldb_iter
 from utxo.script import unwitness
 from utxo.util import new_utxo_file, utxo_file_name
-from blockdb import read_blockfile 
+from blockdb import read_blockfile
 
 
 def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
@@ -22,28 +22,44 @@ def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
 
 
 def dump_joinsplits(datadir, output_dir, n, maxT=0):
-    joinsplits = read_blockfile("/Users/nlevo/Desktop/Crypto/utxo-dump/z-blocks/blocks/blk00000.dat", bytearray.fromhex('fa 1a f9 bf'))
+    joinsplits = read_blockfile("/Users/arieldeschapell/code/UTXO-DUMP/z-blocks/blocks/blk00000.dat", bytearray.fromhex('fa 1a f9 bf'))
     i = 0
     k = 1
     print('new file')
     f = new_utxo_file(output_dir, k)
+
     print('new_joinsplit path: ', f)
     print("Size of joinsplits: %d" % len(joinsplits))
 
     for value in joinsplits:
+        print("WRITINGGGGGGG")
+        print("VALUE:")
         print(value)
         # amt, script = value
-        # f.write(struct.pack('<QQ', value, len(joinsplits)))
-        # f.write(value)
-        # f.write('\n')
-        # i += 1
-        # if i % n == 0:
-        #     f.close()
-        #     k += 1
-        #     print('new file: {}'.format(k))
-        #     f = new_utxo_file(output_dir, k)
-    f.close()
+        print("LENGTH:")
+        print(len(value))
+        f.write(str(len(value)))
+        f.write(value)
+        f.write('\n')
+        i += 1
+        if i ==3:
+            f.close()
+            break
+        if i % n == 0:
+            k += 1
+            print('new file: {}'.format(k))
+            f.close()
+
+    # print("\nREADINGGGGGGG")
+    # t = open("/Users/arieldeschapell/code/UTXO-DUMP/z-dump/utxo-00001.bin", "r+b")
+    # t.seek(20,0)
+    # stringRes=str(t.read())
+    # print(t.name)
+    # print(int(stringRes.encode('hex'), 16))
+
     print 'End of dump_joinsplits function'
+
+
 
 def dump_utxos(datadir, output_dir, n, convert_segwit,
                maxT=0, debug=True, vmcp_file=None):

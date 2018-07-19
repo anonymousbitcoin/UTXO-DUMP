@@ -1,9 +1,11 @@
 import io
 import struct
+from util import new_utxo_file
 from binascii import hexlify
 from struct import unpack
 from typing import List, TypeVar, Callable
 
+bytesArray = []
 
 def read_compact_size(stream, what):
     n, = unpack("<B", stream.read(1))
@@ -194,6 +196,9 @@ class Transaction(object):
 
     @classmethod
     def from_bytes(cls, stream):
+        print("START OF STREAM=")
+        print(stream.tell())
+        streamStart = stream.tell()
         version, = unpack("<I", stream.read(4))
 
         vin = read_vector(stream, TxIn.from_bytes, "TxIn")
@@ -211,7 +216,16 @@ class Transaction(object):
         else:
             joinsplit_pubkey = b""
             joinsplit_sig = b""
-
+        print("END OF STREAM")
+        print(stream.tell())
+        streamEnd = stream.tell()
+        stream.seek(streamStart,0)
+        print("CHANGED STREAM")
+        print(stream.tell())
+        bytesString = stream.read(streamEnd - streamStart)
+        bytesArray.append(bytesString)
+        # print(bytesArray)
+        # print(hexlify(bytesString))
         return Transaction(
             version, vin, vout, locktime, joinsplits, joinsplit_pubkey, joinsplit_sig
         )
@@ -271,6 +285,7 @@ class Block(object):
 def read_blockfile(name, expected_prefix):
     #note: keep track of the number of magics we've hit outside this function, iterate over them fresh for every block in this function
     ret = []
+
     #Open DB directory and limit to reading binary (rb)
     with open(name, "rb") as f:
         #set the first X bytes in file, according to length of expected_prefix, to be the actual magic
@@ -278,8 +293,8 @@ def read_blockfile(name, expected_prefix):
 
         while len(magic):
             #check magic matches expected magic
-            if magic != expected_prefix: 
-                return ret
+            if magic != expected_prefix:
+                return bytesArray
             # assert magic == expected_prefix
             #TODO Compare size and raw_block
             #Read first 4 bytes and save those multiple values to size as signed integer. "Size" is a tuple.
@@ -287,25 +302,53 @@ def read_blockfile(name, expected_prefix):
             #Take raw int, and transform to string as raw_block?
             raw_block = io.BytesIO(f.read(size))
             # ret.append(Block.from_bytes(raw_block))
-            
+
             # ret.append(raw_block)
 
             block = Block.from_bytes(raw_block)
 
             # append only joinsplits
-            for i in block.transactions:
-                for j in i.vjoinsplit:
-                        ret.append(j)
+            # for i in block.transactions:
+                # for j in i.vjoinsplit:
+                        # ret.append(j)
                         # print(ret[-1])
 
             # handle next magic
             magic = f.read(len(expected_prefix))
+    # print(bytesArray)
+    return bytesArray
 
-    return ret
 
-read_blockfile("../z-blocks/blocks/blk00014.dat", bytearray.fromhex('24 e9 27 64'))
+def dump_joinsplits(datadir, output_dir, n, maxT=0):
+    i = 0
+    k = 1
+    f = new_utxo_file(output_dir, k)
+    joinsplits = read_blockfile(datadir + "/blk00000.dat" , bytearray.fromhex('fa 1a f9 bf'))
 
-# import io
+    print('new file')
+    f = new_utxo_file(output_dir, k)
+    print('new_joinsplit path: ', f)
+    print("Size of joinsplits: %d" % len(joinsplits))
+
+    for value in joinsplits:
+        print(value)
+        amt, script = value
+        f.write(struct.pack('<QQ', value, len(joinsplits)))
+        f.write(value)
+        f.write('\n')
+        i += 1
+        if i % n == 0:
+            f.close()
+            k += 1
+            print('new file: {}'.format(k))
+            f = new_utxo_file(output_dir, k)
+        f.close()
+        print 'End of dump_joinsplits function'
+
+
+# dump_joinsplits("../z-blocks/blocks","test",10E3 )
+
+# import iomkdir
 
 # from binascii import hexlify
 # from struct import unpack

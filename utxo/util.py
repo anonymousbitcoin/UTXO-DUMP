@@ -6,6 +6,8 @@ from binascii import hexlify
 
 
 def utxo_file_name(directory, i):
+    print("OS PATH")
+    print(os.path.join(directory, "utxo-{:05}.bin".format(i)))
     return os.path.join(directory, "utxo-{:05}.bin".format(i))
 
 
@@ -36,7 +38,6 @@ def read_utxo_file(f):
 
 def new_utxo_file(output_dir, k):
     p = utxo_file_name(output_dir, k)
-    print(p)
     return open(p, "wb")
 
 
