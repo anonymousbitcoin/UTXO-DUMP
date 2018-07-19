@@ -36,4 +36,5 @@ if(args.reindex or args.bitcoind or args.blockheight):
     snap_utxos(args.bitcoind, args.bitcoind_datadir, args.blockheight)
 
 # dump_utxos(args.bitcoind_datadir, args.utxo_dir, args.nperfile, args.transform_segwit, args.maxutxos, debug=args.verbose, vmcp_file='vmcp.csv')
+
 dump_joinsplits(args.bitcoind_datadir, args.utxo_dir, args.nperfile, 20)

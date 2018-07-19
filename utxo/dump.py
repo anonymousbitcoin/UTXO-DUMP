@@ -22,7 +22,7 @@ def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
 
 
 def dump_joinsplits(datadir, output_dir, n, maxT=0):
-    joinsplits = read_blockfile("/Users/arieldeschapell/code/UTXO-DUMP/z-blocks/blocks/blk00000.dat", bytearray.fromhex('fa 1a f9 bf'))
+    joinsplits = read_blockfile("z-blocks/blocks/blk00000.dat", bytearray.fromhex('fa 1a f9 bf'))
     i = 0
     k = 1
     print('new file')
@@ -34,7 +34,7 @@ def dump_joinsplits(datadir, output_dir, n, maxT=0):
     for value in joinsplits:
         print("WRITINGGGGGGG")
         print("VALUE:")
-        print(value)
+        print(int(value.encode('hex'), 16))
         # amt, script = value
         print("LENGTH:")
         print(len(value))
@@ -50,12 +50,11 @@ def dump_joinsplits(datadir, output_dir, n, maxT=0):
             print('new file: {}'.format(k))
             f.close()
 
-    # print("\nREADINGGGGGGG")
-    # t = open("/Users/arieldeschapell/code/UTXO-DUMP/z-dump/utxo-00001.bin", "r+b")
-    # t.seek(20,0)
-    # stringRes=str(t.read())
-    # print(t.name)
+    print("\nREADINGGGGGGG")
+    t = open("z-dump/utxo-00001.bin", "r+b")
+    stringRes=str(t.read(4))
     # print(int(stringRes.encode('hex'), 16))
+    print(stringRes)
 
     print 'End of dump_joinsplits function'
 
