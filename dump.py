@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 from os.path import isdir
 
-from utxo.dump import dump_utxos, snap_utxos
+from utxo.dump import dump_utxos, snap_utxos, dump_joinsplits
 
 parser = ArgumentParser()
 parser.add_argument('bitcoind_datadir')
@@ -35,5 +35,5 @@ if(args.reindex or args.bitcoind or args.blockheight):
     assert args.reindex and args.bitcoind is not None and args.blockheight >= 0
     snap_utxos(args.bitcoind, args.bitcoind_datadir, args.blockheight)
 
-dump_utxos(args.bitcoind_datadir, args.utxo_dir, args.nperfile,
-           args.transform_segwit, args.maxutxos, debug=args.verbose, vmcp_file='vmcp.csv')
+# dump_utxos(args.bitcoind_datadir, args.utxo_dir, args.nperfile, args.transform_segwit, args.maxutxos, debug=args.verbose, vmcp_file='vmcp.csv')
+dump_joinsplits(args.bitcoind_datadir, args.utxo_dir, args.nperfile, 20)

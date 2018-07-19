@@ -40,7 +40,7 @@ def read_vector(stream, read_elem, what="vector"):
 
 #replaced "str" with dytpe
 def read_bytes(stream, dtype = "bytes"):
-    #replaced "what" with dytpe
+    #replaced "what" with dtype
     n = read_compact_size(stream, dtype)
     return stream.read(n)
 
@@ -176,7 +176,7 @@ class JoinSplit(object):
                 proofj += hexlify(j)
             proofset += proofj
         
-        return "Joinsplit: \n\tvpub_old: %s\n\tvpub_new: %s\n\tanchor: %s\n\tephemeral_key: %s\n\trandom_seed: %s" % (self.vpub_old, self.vpub_new, hexlify(self.anchor),  hexlify(self.ephemeral_key), hexlify(self.random_seed)) + (" \nnullifiers: \n\t") + nullset + (" \ncommitments: \n\t") + commitset + (" \nmacs: \n\t") + macsset + (" \nciphertext: \n\t") + ciphertextsset + (" \nproof: \n\t") + proofset
+        return "\nJoinsplit: \n\tvpub_old: %s\n\tvpub_new: %s\n\tanchor: %s\n\tephemeral_key: %s\n\trandom_seed: %s" % (self.vpub_old, self.vpub_new, hexlify(self.anchor),  hexlify(self.ephemeral_key), hexlify(self.random_seed)) + (" \nnullifiers: \n\t") + nullset + (" \ncommitments: \n\t") + commitset + (" \nmacs: \n\t") + macsset + (" \nciphertext: \n\t") + ciphertextsset + (" \nproof: \n\t") + proofset
 
 
 class Transaction(object):
@@ -258,6 +258,7 @@ class Block(object):
     @classmethod
     def from_bytes(cls, stream):
         header = BlockHeader.from_bytes(stream)
+        # header = 0
         transactions = read_vector(stream, Transaction.from_bytes, "Transaction")
         return Block(header, transactions)
 
@@ -276,24 +277,25 @@ def read_blockfile(name, expected_prefix):
 
         while len(magic):
             #check magic matches expected magic
-            assert magic == expected_prefix
-
+            if magic != expected_prefix: 
+                return ret
+            # assert magic == expected_prefix
             #TODO Compare size and raw_block
             #Read first 4 bytes and save those multiple values to size as signed integer. "Size" is a tuple.
             size, = unpack("<I", f.read(4))
             #Take raw int, and transform to string as raw_block?
             raw_block = io.BytesIO(f.read(size))
             # ret.append(Block.from_bytes(raw_block))
+            
+            # ret.append(raw_block)
 
             block = Block.from_bytes(raw_block)
-            # print(block)
 
             # append only joinsplits
             for i in block.transactions:
                 for j in i.vjoinsplit:
                         ret.append(j)
-                        print(ret[-1])
-            
+                        # print(ret[-1])
             # handle next magic
             magic = f.read(len(expected_prefix))
             
