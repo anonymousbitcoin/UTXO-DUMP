@@ -34,11 +34,11 @@ def dump_joinsplits(datadir, output_dir, n, maxT=0):
     for value in joinsplits:
         print("WRITINGGGGGGG")
         print("VALUE:")
-        print(int(value.encode('hex'), 16))
+        print(value.encode('hex'), 16)
         # amt, script = value
         print("LENGTH:")
         print(len(value))
-        f.write(str(len(value)))
+        f.write("{0:b}".format(len(value)))
         f.write(value)
         f.write('\n')
         i += 1
@@ -52,7 +52,7 @@ def dump_joinsplits(datadir, output_dir, n, maxT=0):
 
     print("\nREADINGGGGGGG")
     t = open("z-dump/utxo-00001.bin", "r+b")
-    stringRes=str(t.read(4))
+    stringRes=t.read(211)
     # print(int(stringRes.encode('hex'), 16))
     print(stringRes)
 
