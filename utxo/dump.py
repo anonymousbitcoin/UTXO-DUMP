@@ -30,7 +30,7 @@ def dump_joinsplits(datadir, output_dir, n, maxT=0):
 
     print('new_joinsplit path: ', f)
     print("Size of joinsplits: %d" % len(joinsplits))
-
+    numberWrites = 0
     for value in joinsplits:
         print("WRITINGGGGGGG")
         print("VALUE:")
@@ -38,25 +38,35 @@ def dump_joinsplits(datadir, output_dir, n, maxT=0):
         # amt, script = value
         print("LENGTH:")
         print(len(value))
+
         f.write("{0:b}".format(len(value)))
         f.write(value)
         f.write('\n')
         i += 1
-        if i ==3:
-            f.close()
-            break
+        # if i ==3:
+        #     f.close()
+        #     break
+        numberWrites += 1
         if i % n == 0:
             k += 1
             print('new file: {}'.format(k))
-            f.close()
+            
 
+    f.close()
     print("\nREADINGGGGGGG")
     t = open("z-dump/utxo-00001.bin", "r+b")
-    stringRes=t.read(211)
-    # print(int(stringRes.encode('hex'), 16))
-    print(stringRes)
 
+    while True:
+        print(numberWrites)
+        stringRes=t.read(8)
+        print(len(stringRes))
+        if len(stringRes) == 1:
+            break
+        print(int(stringRes,2))
+        # print(int(stringRes.encode('hex'), 16))
+        print(hexlify(t.read(int(stringRes,2))))
     print 'End of dump_joinsplits function'
+    return
 
 
 

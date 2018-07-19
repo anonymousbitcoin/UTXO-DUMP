@@ -1,5 +1,6 @@
 import io
 import struct
+import sys
 from util import new_utxo_file
 from binascii import hexlify
 from struct import unpack
@@ -316,6 +317,9 @@ def read_blockfile(name, expected_prefix):
             # handle next magic
             magic = f.read(len(expected_prefix))
     # print(bytesArray)
+    print("RETURNS BITCH")
+    print(len(bytesArray))
+    quit()
     return bytesArray
 
 
