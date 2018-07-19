@@ -156,7 +156,7 @@ class JoinSplit(object):
         nullset = ""
         for i in self.nullifiers:
             nullset += hexlify(i) + "\n\t"
-        
+
         commitset = ""
         for i in self.commitments:
             commitset += hexlify(i) + "\n\t"
@@ -175,8 +175,9 @@ class JoinSplit(object):
             for j in i:
                 proofj += hexlify(j)
             proofset += proofj
-        
-        return "\nJoinsplit: \n\tvpub_old: %s\n\tvpub_new: %s\n\tanchor: %s\n\tephemeral_key: %s\n\trandom_seed: %s" % (self.vpub_old, self.vpub_new, hexlify(self.anchor),  hexlify(self.ephemeral_key), hexlify(self.random_seed)) + (" \nnullifiers: \n\t") + nullset + (" \ncommitments: \n\t") + commitset + (" \nmacs: \n\t") + macsset + (" \nciphertext: \n\t") + ciphertextsset + (" \nproof: \n\t") + proofset
+
+        return "\tJoinsplit:{ \n\t\tvpub_old: %s\n\t\tvpub_new: %s\n\t\tanchor: %s\n\t\tephemeral_key: %s\n\t\trandom_seed: %s" % (self.vpub_old, self.vpub_new, hexlify(self.anchor),  hexlify(self.ephemeral_key), hexlify(self.random_seed)) + (" \n\t\tnullifiers: \n\t\t") + nullset + (" \n\t\tcommitments: \n\t\t") + commitset + (" \n\t\tmacs: \n\t\t") + macsset + (" \n\t\tciphertext: \n\t\t") + ciphertextsset + (" \n\t\tproof: \n\t\t") + proofset + "\n\t\t}"
+
 
 
 class Transaction(object):
@@ -215,7 +216,7 @@ class Transaction(object):
             version, vin, vout, locktime, joinsplits, joinsplit_pubkey, joinsplit_sig
         )
     def __repr__(self):
-        return "\t ----- version: %s \n\ttime lock: %s" % (self.version, self.lock_time) + "\n" + ", ".join(map(str, self.vjoinsplit))
+        return "\t -----------------\n\tversion: %s \n\ttime lock: %s" % (self.version, self.lock_time) + "\n" + " ".join(map(str, self.vjoinsplit))
 
 
 class BlockHeader(object):
@@ -263,8 +264,8 @@ class Block(object):
         return Block(header, transactions)
 
     def __repr__(self):
-        return "Block header: \n%s" % (self.header) + "Transactions: \n" + ", ".join(map(str, self.transactions))
-    
+        return "##################################Block#################################### \n Header: \n%s" % (self.header) + "-------------------------------------------------------------- \n \tTransactions: \n" + ", ".join(map(str, self.transactions))
+
 
 
 def read_blockfile(name, expected_prefix):
@@ -296,12 +297,13 @@ def read_blockfile(name, expected_prefix):
                 for j in i.vjoinsplit:
                         ret.append(j)
                         # print(ret[-1])
+
             # handle next magic
             magic = f.read(len(expected_prefix))
-            
+
     return ret
 
-
+read_blockfile("../z-blocks/blocks/blk00014.dat", bytearray.fromhex('24 e9 27 64'))
 
 # import io
 
