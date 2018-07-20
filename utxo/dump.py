@@ -22,24 +22,28 @@ def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
 
 
 def dump_joinsplits(datadir, output_dir, n, maxT=2):
-    joinsplits = read_blockfile("z-blocks/blocks/blk00000.dat", bytearray.fromhex('fa 1a f9 bf'))
+    # joinsplits = read_blockfile("z-blocks/blk00014.dat", bytearray.fromhex('fa 1a f9 bf'))
+    joinsplits = read_blockfile("z-blocks/blk00014.dat", bytearray.fromhex('24 e9 27 64'))
+
     globalTransactionCounter = 0
     fileNumber = 1
     counterPerFile = 0
-    print('new file')
-    maxT = 2
+    maxT = 3500 #4000
+
     while len(joinsplits) != 0:
+        print('NEW FILE')
+        # print(fileNumber)
+        print("LENGTH:")
+        print(len(joinsplits))
         f = new_utxo_file(output_dir, fileNumber)
-        print('new_joinsplit path: ', f)
-        print("Size of joinsplits: %d" % len(joinsplits))
+        # print('new_joinsplit path: ', f)
+        # print("Size of joinsplits: %d" % len(joinsplits))
         for value in joinsplits:
 
             # print(len(joinsplits))
             # print("WRITINGGGGGGG")
             # print("VALUE:")
             # amt, script = value
-            # print("LENGTH:")
-            # print(len(value))
             # print("{0:b}".format(len(value)))
             #binary convention?
             lengthStr = "{0:b}".format(len(value))
@@ -48,11 +52,10 @@ def dump_joinsplits(datadir, output_dir, n, maxT=2):
             if (len(lengthStr) < 32 ):
                 while len(lengthStr) < 32:
                     lengthStr = "{0:b}".format(0) + lengthStr
-            print("AFTER" )
+            # print("AFTER" )
             # print(lengthStr)
             f.write(lengthStr)
             f.write(value)
-            print(hexlify(value))
             # f.write('\n')
             globalTransactionCounter += 1
             counterPerFile += 1
@@ -62,7 +65,11 @@ def dump_joinsplits(datadir, output_dir, n, maxT=2):
             # if i % n == 0:
             #     k += 1
             #     print('new file: {}'.format(k))
+            print("FIND ME")
+            print(fileNumber)
+            print(hexlify(value))
             if maxT != 0 and counterPerFile >= maxT:
+                print(hexlify(value))
                 break
         #remove objects from array that were written
         joinsplits = joinsplits[counterPerFile:]
@@ -70,7 +77,9 @@ def dump_joinsplits(datadir, output_dir, n, maxT=2):
         fileNumber += 1
         f.close()
     print("\nREADINGGGGGGG")
-    t = open("z-dump/utxo-00001.bin", "rb")
+
+
+    t = open("z-dump/utxo-00004.bin", "rb")
 
     while True:
         # print(numberWrites)
@@ -83,7 +92,7 @@ def dump_joinsplits(datadir, output_dir, n, maxT=2):
 
         # print(int(stringRes.encode('hex'), 16))
         thing = t.read(int(stringRes,2))
-        print(hexlify(thing))
+        # print(hexlify(thing))
     print 'End of dump_joinsplits function'
     return
 

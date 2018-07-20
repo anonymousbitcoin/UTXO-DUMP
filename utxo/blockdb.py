@@ -214,6 +214,7 @@ class Transaction(object):
         if len(joinsplits) > 0:
             joinsplit_pubkey = stream.read(32)
             joinsplit_sig = stream.read(64)
+
         else:
             joinsplit_pubkey = b""
             joinsplit_sig = b""
@@ -298,7 +299,6 @@ def read_blockfile(name, expected_prefix):
             counter += 1
             #check magic matches expected magic
             if magic != expected_prefix:
-                print("RETURNS BITCH")
                 print(len(bytesArray))
                 # print("Transaction counter:")
                 # print(transactionCounter)
@@ -321,7 +321,7 @@ def read_blockfile(name, expected_prefix):
                         # print(ret[-1])
             # handle next magic
             magic = f.read(len(expected_prefix))
-    
+
     print("RETURNS BITCH")
     print(len(bytesArray))
     # print("Transaction counter:")
