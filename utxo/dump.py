@@ -21,49 +21,69 @@ def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
     os.system(cmd)
 
 
-def dump_joinsplits(datadir, output_dir, n, maxT=0):
+def dump_joinsplits(datadir, output_dir, n, maxT=2):
     joinsplits = read_blockfile("z-blocks/blocks/blk00000.dat", bytearray.fromhex('fa 1a f9 bf'))
-    i = 0
-    k = 1
+    globalTransactionCounter = 0
+    fileNumber = 1
+    counterPerFile = 0
     print('new file')
-    f = new_utxo_file(output_dir, k)
+    maxT = 2
+    while len(joinsplits) != 0:
+        f = new_utxo_file(output_dir, fileNumber)
+        print('new_joinsplit path: ', f)
+        print("Size of joinsplits: %d" % len(joinsplits))
+        for value in joinsplits:
 
-    print('new_joinsplit path: ', f)
-    print("Size of joinsplits: %d" % len(joinsplits))
-    numberWrites = 0
-    for value in joinsplits:
-        # print("WRITINGGGGGGG")
-        # print("VALUE:")
-        # print(value.encode('hex'), 16)
-        # amt, script = value
-        # print("LENGTH:")
-        # print(len(value))
-        f.write("{0:b}".format(len(value)))
-        f.write(value)
-        f.write('\n')
-        i += 1
-        # if i ==3:
-        #     f.close()
-        #     break
-        numberWrites += 1
-        if i % n == 0:
-            k += 1
-            print('new file: {}'.format(k))
-            
-
-    f.close()
+            # print(len(joinsplits))
+            # print("WRITINGGGGGGG")
+            # print("VALUE:")
+            # amt, script = value
+            # print("LENGTH:")
+            # print(len(value))
+            # print("{0:b}".format(len(value)))
+            #binary convention?
+            lengthStr = "{0:b}".format(len(value))
+            # print("BEFORE " )
+            # print(lengthStr)
+            if (len(lengthStr) < 32 ):
+                while len(lengthStr) < 32:
+                    lengthStr = "{0:b}".format(0) + lengthStr
+            print("AFTER" )
+            # print(lengthStr)
+            f.write(lengthStr)
+            f.write(value)
+            print(hexlify(value))
+            # f.write('\n')
+            globalTransactionCounter += 1
+            counterPerFile += 1
+            # if i ==3:
+            #     f.close()
+            #     break
+            # if i % n == 0:
+            #     k += 1
+            #     print('new file: {}'.format(k))
+            if maxT != 0 and counterPerFile >= maxT:
+                break
+        #remove objects from array that were written
+        joinsplits = joinsplits[counterPerFile:]
+        counterPerFile = 0
+        fileNumber += 1
+        f.close()
     print("\nREADINGGGGGGG")
-    t = open("z-dump/utxo-00001.bin", "r+b")
+    t = open("z-dump/utxo-00001.bin", "rb")
 
     while True:
         # print(numberWrites)
-        stringRes=t.read(8)
-        # print(len(stringRes))
-        if len(stringRes) == 1:
+        stringRes=t.read(32)
+        # print(stringRes)
+        # print(int(stringRes,2))
+        if len(stringRes) <= 1:
             break
         # print(int(stringRes,2))
+
         # print(int(stringRes.encode('hex'), 16))
-        # print(hexlify(t.read(int(stringRes,2))))
+        thing = t.read(int(stringRes,2))
+        print(hexlify(thing))
     print 'End of dump_joinsplits function'
     return
 
@@ -71,8 +91,6 @@ def dump_joinsplits(datadir, output_dir, n, maxT=0):
 
 def dump_utxos(datadir, output_dir, n, convert_segwit,
                maxT=0, debug=True, vmcp_file=None):
-    # read_blockfile("/Users/nlevo/Desktop/Crypto/utxo-dump/z-blocks/blocks/blk00000.dat", bytearray.fromhex('24 e9 27 64'))
-    read_blockfile("/Users/nlevo/Desktop/Crypto/utxo-dump/z-blocks/blocks/blk00000.dat", bytearray.fromhex('fa 1a f9 bf'))
 
     i = 0
     k = 1
