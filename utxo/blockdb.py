@@ -300,6 +300,7 @@ def read_blockfile(name, expected_prefix):
             #check magic matches expected magic
             if magic != expected_prefix:
                 print(len(bytesArray))
+                print("End of file or wrong magic")
                 # print("Transaction counter:")
                 # print(transactionCounter)
                 # print("read_blockfile counter: ")

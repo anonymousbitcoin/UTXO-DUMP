@@ -22,41 +22,40 @@ def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
 
 
 def dump_joinsplits(datadir, output_dir, n, maxT=2):
+    mainnet = bytearray.fromhex('24 e9 27 64')
+    testnet = bytearray.fromhex('fa 1a f9 bf')
     # joinsplits = read_blockfile("z-blocks/blk00014.dat", bytearray.fromhex('fa 1a f9 bf'))
-    joinsplits = read_blockfile("z-blocks/blk00014.dat", bytearray.fromhex('24 e9 27 64'))
-
+    
     globalTransactionCounter = 0
     fileNumber = 1
     counterPerFile = 0
     maxT = 3500 #4000
 
+    # DUMP T-transactions
+    fileNumber = dump_utxos(datadir, output_dir, n, False, False, 3500, fileNumber) + 1
+    print("Starting to write Z-transactions")
+    # DUMP Z-transactions
+    # joinsplits = read_blockfile("z-blocks/blk00014.dat", bytearray.fromhex('24 e9 27 64'))
+    print(datadir)
+    joinsplits = read_blockfile(datadir + "/blocks/blk00000.dat", testnet)
     while len(joinsplits) != 0:
         print('NEW FILE')
         # print(fileNumber)
         print("LENGTH:")
         print(len(joinsplits))
         f = new_utxo_file(output_dir, fileNumber)
-        # print('new_joinsplit path: ', f)
         # print("Size of joinsplits: %d" % len(joinsplits))
         for value in joinsplits:
 
             # print(len(joinsplits))
-            # print("WRITINGGGGGGG")
-            # print("VALUE:")
-            # amt, script = value
             # print("{0:b}".format(len(value)))
             #binary convention?
             lengthStr = "{0:b}".format(len(value))
-            # print("BEFORE " )
-            # print(lengthStr)
             if (len(lengthStr) < 32 ):
                 while len(lengthStr) < 32:
                     lengthStr = "{0:b}".format(0) + lengthStr
-            # print("AFTER" )
-            # print(lengthStr)
             f.write(lengthStr)
             f.write(value)
-            # f.write('\n')
             globalTransactionCounter += 1
             counterPerFile += 1
             # if i ==3:
@@ -76,10 +75,11 @@ def dump_joinsplits(datadir, output_dir, n, maxT=2):
         counterPerFile = 0
         fileNumber += 1
         f.close()
+        print("Saved Z-transactions: ", globalTransactionCounter)
     print("\nREADINGGGGGGG")
 
 
-    t = open("z-dump/utxo-00004.bin", "rb")
+    t = open("z-dump/anon/testnet/utxo-00002.bin", "rb")
 
     while True:
         # print(numberWrites)
@@ -88,21 +88,21 @@ def dump_joinsplits(datadir, output_dir, n, maxT=2):
         # print(int(stringRes,2))
         if len(stringRes) <= 1:
             break
-        # print(int(stringRes,2))
+        print(int(stringRes,2))
 
         # print(int(stringRes.encode('hex'), 16))
         thing = t.read(int(stringRes,2))
-        # print(hexlify(thing))
+        print(hexlify(thing))
     print 'End of dump_joinsplits function'
     return
 
 
 
 def dump_utxos(datadir, output_dir, n, convert_segwit,
-               maxT=0, debug=True, vmcp_file=None):
+               maxT=0, debug=True, fileNum=1):
 
     i = 0
-    k = 1
+    k = fileNum
 
     print('new file')
     f = new_utxo_file(output_dir, k)
@@ -129,7 +129,6 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         i += 1
         if i % n == 0:
             f.close()
-
             k += 1
             print('new file: {}'.format(k))
             f = new_utxo_file(output_dir, k)
@@ -138,9 +137,12 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
             break
 
     f.close()
-    print 'BEFORE WRITING TO vmcp_file'
-    print(output_dir)
-    write_vmcp_data(output_dir, k + 1, vmcp_file)
+    print("Done writing t-addresses")
+    print("Saved T-transactions: ", i)
+    return k
+    # print 'BEFORE WRITING TO vmcp_file'
+    # print(output_dir)
+    # write_vmcp_data(output_dir, k + 1, vmcp_file)
 
 
 def write_vmcp_data(output_dir, k, vmcp_file):
