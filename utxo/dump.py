@@ -14,102 +14,131 @@ from blockdb import read_blockfile
 
 
 def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
-
-    cmd = "{} -reindex-chainstate -datadir={} -stopatheight={}".format(
+    
+    cmd = "{} -reindex-chainstate -datadir=\"{}\" -stopatheight={}".format(
         bitcoind, bitcoind_datadir, stop_block)
+    print("cmd")
+    print (cmd)
     print("running " + cmd)
     os.system(cmd)
 
 
-def dump_joinsplits(datadir, output_dir, n, maxT=2):
-    mainnet = bytearray.fromhex('24 e9 27 64')
-    testnet = bytearray.fromhex('fa 1a f9 bf')
-    # joinsplits = read_blockfile("z-blocks/blk00014.dat", bytearray.fromhex('fa 1a f9 bf'))
+def get_magic(network, coin):
+    if network == "testnet":
+        if coin == "zcl":
+            return bytearray.fromhex('fa 1a f9 bf') #testnetZCLMagic
+        elif coin == "bitcoin":
+            return bytearray.fromhex('0b 11 09 07') #testnetBitcoinMagic
+    elif network == "mainnet":
+        if coin == "zcl":
+            return bytearray.fromhex('24 e9 27 64') #mainnetZCLMagic
+        elif coin == "bitcoin":
+            return bytearray.fromhex('f9 be b4 d9') #mainnetBitcoinMagic
+    assert 0, "The provided network or coin name aren't supported. Use the following network: 'mainnet' or 'testnet'; coin: 'zcl' or 'bitcoin' "
+
+    # mainnetZCLMagic = bytearray.fromhex('24 e9 27 64') 
+    # testnetZCLMagic = bytearray.fromhex('fa 1a f9 bf')
+    # mainnetBitcoinMagic = bytearray.fromhex('f9 be b4 d9')
+    # testnetBitcoinMagic = bytearray.fromhex('0b 11 09 07')
+
+def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num, z_address, network, coin):
+    #get magic for the provided network and coin
+    magic = get_magic(network, coin)
+    fileNumber = file_num 
+    returnObject = {}
+    globalTransactionCounter = 0 #keep track of total transaction 
+    fileNumber = 1 #keep track of created files
+    # counterPerFile = 0 #keep track of transcations per file
+    # maxT = maxT #4000 
+
+    #write regular utxo (t-transactions)
+    returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num)
     
-    globalTransactionCounter = 0
-    fileNumber = 1
-    counterPerFile = 0
-    maxT = 3500 #4000
+    if z_address:
+        print("z_address: %d" % z_address)
+        globalTransactionCounter = returnObject['globalTransactionCounter']
+        fileNumber = returnObject['fileNumber'] + 1
+        returnObject = {}
+        returnObject = dump_jointsplits(datadir, output_dir, file_size, maxT, globalTransactionCounter, fileNumber, magic)
+        
+        globalTransactionCounter = returnObject['globalTransactionCounter']
+        fileNumber = returnObject['fileNumber']
+    else:
+        globalTransactionCounter = returnObject['globalTransactionCounter']
+        fileNumber = returnObject['fileNumber']
 
-    # DUMP T-transactions
-    fileNumber = dump_utxos(datadir, output_dir, n, False, False, 3500, fileNumber) + 1
-    print("Starting to write Z-transactions")
-    # DUMP Z-transactions
-    # joinsplits = read_blockfile("z-blocks/blk00014.dat", bytearray.fromhex('24 e9 27 64'))
-    print(datadir)
-    joinsplits = read_blockfile(datadir + "/blocks/blk00000.dat", testnet)
-    while len(joinsplits) != 0:
-        print('NEW FILE')
-        # print(fileNumber)
-        print("LENGTH:")
-        print(len(joinsplits))
-        f = new_utxo_file(output_dir, fileNumber)
-        # print("Size of joinsplits: %d" % len(joinsplits))
-        for value in joinsplits:
-
-            # print(len(joinsplits))
-            # print("{0:b}".format(len(value)))
-            #binary convention?
-            lengthStr = "{0:b}".format(len(value))
-            if (len(lengthStr) < 32 ):
-                while len(lengthStr) < 32:
-                    lengthStr = "{0:b}".format(0) + lengthStr
-            f.write(lengthStr)
-            f.write(value)
-            globalTransactionCounter += 1
-            counterPerFile += 1
-            # if i ==3:
-            #     f.close()
-            #     break
-            # if i % n == 0:
-            #     k += 1
-            #     print('new file: {}'.format(k))
-            print("FIND ME")
-            print(fileNumber)
-            print(hexlify(value))
-            if maxT != 0 and counterPerFile >= maxT:
-                print(hexlify(value))
-                break
-        #remove objects from array that were written
-        joinsplits = joinsplits[counterPerFile:]
-        counterPerFile = 0
-        fileNumber += 1
-        f.close()
-        print("Saved Z-transactions: ", globalTransactionCounter)
-    print("\nREADINGGGGGGG")
-
-
-    t = open("z-dump/anon/testnet/utxo-00002.bin", "rb")
-
-    while True:
-        # print(numberWrites)
-        stringRes=t.read(32)
-        # print(stringRes)
-        # print(int(stringRes,2))
-        if len(stringRes) <= 1:
-            break
-        print(int(stringRes,2))
-
-        # print(int(stringRes.encode('hex'), 16))
-        thing = t.read(int(stringRes,2))
-        print(hexlify(thing))
-    print 'End of dump_joinsplits function'
+    print "Total files created: ", fileNumber - 1
+    print "Total transactions created: %d " % globalTransactionCounter
     return
 
 
+def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fileNumber, magic):
+    counterPerFile = 0 #keep track of transcations per file
+    #1. WRITE ZCL T-transactions
+    print("Starting to write T-transactions")
+    # fileNumber = dump_utxos(datadir, output_dir, n, False, False, 3500, fileNumber) + 1
+    # print("Starting to write Z-transactions")
+    
+    #2. WRITE ZCL Z-transactions
+    # print(datadir)
+    numberOfFilesToRead = 0
+    numberFile = 0
+    joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % numberFile, magic)
+    numberFile += 1
+    while len(joinsplits) != 0:
+        # print('NEW FILE')
+        # print(fileNumber))
+        f = new_utxo_file(output_dir, fileNumber)  #create and open a new file
+        for value in joinsplits:
+            lengthStr = "{0:b}".format(len(value)) #bytes length of the transaction
+            #format binary length in big-endian (32 bit) format
+            if (len(lengthStr) < 32 ):
+                while len(lengthStr) < 32:
+                    lengthStr = "{0:b}".format(0) + lengthStr
+            f.write(lengthStr) #write length of the transaction
+            f.write(value)     #write actual transaction
+            globalTransactionCounter += 1
+            counterPerFile += 1
+            # print(fileNumber)
+            # print(hexlify(value))
+            # limit transaction per file (<= max transactions)
+            if maxT != 0 and counterPerFile >= maxT:
+                # print(hexlify(value))
+                break
+        #remove objects from array that were written
+        joinsplits = joinsplits[counterPerFile:]
+        if(len(joinsplits) == 0 and (numberFile <= numberOfFilesToRead)):
+            joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % numberFile, magic)
+            numberFile += 1
+        counterPerFile = 0
+        fileNumber += 1
+        f.close()
+        print("Wrote Z-transactions: ", globalTransactionCounter)
+
+    print 'Total number of transaction written: %s' % globalTransactionCounter
+    return { 'globalTransactionCounter': globalTransactionCounter, 'fileNumber': fileNumber }
 
 def dump_utxos(datadir, output_dir, n, convert_segwit,
-               maxT=0, debug=True, fileNum=1):
-
+               maxT, debug, fileNum):
+    print("Starting to write Z-transactions")
+    
+    j = 0
     i = 0
     k = fileNum
 
     print('new file')
     f = new_utxo_file(output_dir, k)
     print('new_utxo_file path: ', f)
+    # print('value length: %d' % len(ldb_iter(datadir)))
     for value in ldb_iter(datadir):
-
         tx_hash, height, index, amt, script = value
+        print "Height: %d" % height
+        # print "Original: "
+        # print(hexlify(tx_hash))
+        print "Reversed: "
+        reversedString = hexlify(tx_hash)
+        print("".join(reversed([reversedString[i:i+2] for i in range(0, len(reversedString), 2)])))
+        print()
         # print("Amt: \n")
         # print(amt)
         # print("Script: \n")
@@ -117,64 +146,60 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         if convert_segwit:
             script = unwitness(script, debug)
 
-        if debug:
-            print(k, i, hexlify(tx_hash[::-1]), height, index,
-                  amt, hexlify(script))
-            print(value)
+        # if debug:
+        #     print(k, i, hexlify(tx_hash[::-1]), height, index,
+        #           amt, hexlify(script))
+        #     print(value)
 
         f.write(struct.pack('<QQ', amt, len(script)))
         f.write(script)
         f.write('\n')
 
         i += 1
-        if i % n == 0:
+        j += 1
+        if i >= maxT:
             f.close()
             k += 1
-            print('new file: {}'.format(k))
+            # print('new file: {}'.format(k))
+            print("Saved T-transactions: ", i)
+            i = 0
             f = new_utxo_file(output_dir, k)
 
-        if maxT != 0 and i >= maxT:
-            break
+        # if maxT != 0 and i >= maxT:
+        #     break
 
     f.close()
-    print("Done writing t-addresses")
     print("Saved T-transactions: ", i)
-    return k
+    return { 'globalTransactionCounter': j, 'fileNumber': k }
+
+
+
+
+
+    
     # print 'BEFORE WRITING TO vmcp_file'
     # print(output_dir)
     # write_vmcp_data(output_dir, k + 1, vmcp_file)
 
+# print(int(stringRes.encode('hex'), 16))
+# if i ==3:
+    #     f.close()
+    #     break
+# if i % n == 0:
+#     k += 1
+#     print('new file: {}'.format(k))
 
-def write_vmcp_data(output_dir, k, vmcp_file):
+#   t = open("z-dump/anon/testnet/utxo-00002.bin", "rb")
 
-    def addr_to_script(addr):
-        if addr[:2] == 't3':
-            scr = 'a914' + a2b_hashed_base58(addr)[2:].encode('hex') + '87'
-            return scr.decode('hex')
+#     while True:
+#         # print(numberWrites)
+#         stringRes=t.read(32)
+#         # print(stringRes)
+#         # print(int(stringRes,2))
+#         if len(stringRes) <= 1:
+#             break
+#         print(int(stringRes,2))
 
-        assert addr[:2] == 't1'
-        k = Key.from_text(addr)
-        enc = '76a914'+k.hash160()[1:].encode('hex')+'88ac'
-        return enc.decode('hex')
-
-    reader = csv.reader(open(vmcp_file, 'rb'), delimiter=",", quotechar='"')
-    print 'writing vmcp data from {} to utxo-{}'.format(vmcp_file, utxo_file_name(output_dir, k))
-
-    balances = {}
-    for i, line in enumerate(reader):
-        if i == 0:
-            continue
-
-        line[0] = addr_to_script(line[0])
-        assert line[0] not in balances
-        assert len(line) == 5
-        balances[line[0]] = int(float(line[-1]) * 100E6)
-
-    f = new_utxo_file(output_dir, k)
-    for script, amt in balances.iteritems():
-        f.write(struct.pack('<QQ', amt, len(script)))
-        f.write(script)
-        f.write('\n')
-
-    f.close()
-    print 'wrote {} records'.format(i)
+        
+#         thing = t.read(int(stringRes,2))
+#         print(hexlify(thing))
