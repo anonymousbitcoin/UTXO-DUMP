@@ -53,9 +53,8 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
 
     #write regular utxo (t-transactions)
     returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num)
-    
     if z_address:
-        print("z_address: %d" % z_address)
+        # print("z_address: %d" % z_address)
         globalTransactionCounter = returnObject['globalTransactionCounter']
         fileNumber = returnObject['fileNumber'] + 1
         returnObject = {}
@@ -67,22 +66,26 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
         globalTransactionCounter = returnObject['globalTransactionCounter']
         fileNumber = returnObject['fileNumber']
 
-    print "Total files created: ", fileNumber - 1
-    print "Total transactions created: %d " % globalTransactionCounter
+    print "Total T+Z written: \t%d " % globalTransactionCounter
+    print "Total files created: \t", fileNumber - 1
+    print("##########################################")
     return
 
 
 def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fileNumber, magic):
     counterPerFile = 0 #keep track of transcations per file
     #1. WRITE ZCL T-transactions
-    print("Starting to write T-transactions")
+    # print("Starting to write Z-transactions")
     # fileNumber = dump_utxos(datadir, output_dir, n, False, False, 3500, fileNumber) + 1
     # print("Starting to write Z-transactions")
-    
+
     #2. WRITE ZCL Z-transactions
     # print(datadir)
     numberOfFilesToRead = 0
+    localTotalCounter = 0
     numberFile = 0
+    # print("magic")
+    # print(hexlify(magic))
     joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % numberFile, magic)
     numberFile += 1
     while len(joinsplits) != 0:
@@ -99,6 +102,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             f.write(value)     #write actual transaction
             globalTransactionCounter += 1
             counterPerFile += 1
+            localTotalCounter += 1
             # print(fileNumber)
             # print(hexlify(value))
             # limit transaction per file (<= max transactions)
@@ -113,14 +117,13 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
         counterPerFile = 0
         fileNumber += 1
         f.close()
-        print("Wrote Z-transactions: ", globalTransactionCounter)
-
-    print 'Total number of transaction written: %s' % globalTransactionCounter
+    print("##########################################")
+    print 'Total Z written: \t%s' % localTotalCounter
     return { 'globalTransactionCounter': globalTransactionCounter, 'fileNumber': fileNumber }
 
 def dump_utxos(datadir, output_dir, n, convert_segwit,
                maxT, debug, fileNum):
-    print("Starting to write Z-transactions")
+    # print("Starting to write Z-transactions")
     
     j = 0
     i = 0
@@ -159,17 +162,19 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         j += 1
         if i >= maxT:
             f.close()
+            # print("Saved T-transactions: %d in file# %d" % (i,k))
             k += 1
             # print('new file: {}'.format(k))
-            print("Saved T-transactions: ", i)
             i = 0
             f = new_utxo_file(output_dir, k)
 
         # if maxT != 0 and i >= maxT:
         #     break
-
+    # print("Saved T-transactions: %d in file# %d" % (j, k-1 if k==0 else k))
     f.close()
-    print("Saved T-transactions: ", i)
+    print("##########################################")
+    print("Total T written: \t%d" % j)
+    print("##########################################")
     return { 'globalTransactionCounter': j, 'fileNumber': k }
 
 

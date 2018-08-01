@@ -299,7 +299,7 @@ def read_blockfile(name, expected_prefix):
             counter += 1
             #check magic matches expected magic
             if magic != expected_prefix:
-                print(len(bytesArray))
+                # print(len(bytesArray))
                 print("End of file or wrong magic")
                 return bytesArray
             # assert magic == expected_prefix

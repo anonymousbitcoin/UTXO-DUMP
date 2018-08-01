@@ -47,14 +47,14 @@ if(args.reindex or args.bitcoind or args.blockheight):
     snap_utxos(args.bitcoind, args.bitcoind_datadir, args.blockheight)
 
 # dump_utxos(args.bitcoind_datadir, args.utxo_dir, args.nperfile, args.transform_segwit, args.maxutxos, debug=args.verbose, vmcp_file='vmcp.csv')
-print("z_address2")
-print(args.z_address)
-print("transform_segwit")
-print(args.transform_segwit)
-print("coin")
-print(args.coin)
-print("network")
-print(args.network)
+# print("z_address2")
+# print(args.z_address)
+# print("transform_segwit")
+# print(args.transform_segwit)
+# print("coin")
+# print(args.coin)
+# print("network")
+# print(args.network)
 
 
 dump_transactions(datadir=args.bitcoind_datadir, output_dir=args.utxo_dir, file_size=args.nperfile, convert_segwit=args.transform_segwit, maxT=args.maxutxos, debug=args.verbose, file_num=args.file_num, z_address=args.z_address, network=args.network, coin=args.coin)
