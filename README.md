@@ -1,3 +1,11 @@
+To run, you should run the following commands
+
+```
+python -m virtualenv env
+source env/bin/activate
+pip install -r requirements.txt
+```
+
 Snapshot on 2018-02-28
 
 `./dump.py BITCOIN_DATADIR OUTPUT_DIR --verbose=True --reindex=True --bitcoind BITCOIND_PATH --blockheight=511346 --vmcp_file=./vmcp.csv`
