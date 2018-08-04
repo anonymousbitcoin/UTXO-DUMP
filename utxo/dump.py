@@ -140,7 +140,7 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         # print(hexlify(tx_hash))
         print "Reversed: "
         reversedString = hexlify(tx_hash)
-        print("".join(reversed([reversedString[i:i+2] for i in range(0, len(reversedString), 2)])))
+        print("".join(reversed([reversedString[x:x+2] for x in range(0, len(reversedString), 2)])))
         print()
         # print("Amt: \n")
         # print(amt)
