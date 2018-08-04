@@ -53,6 +53,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
 
     #write regular utxo (t-transactions)
     returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num)
+    # fileNumber = dump_utxos(datadir, output_dir, n, False, maxT, False, fileNumber)
     if z_address:
         # print("z_address: %d" % z_address)
         globalTransactionCounter = returnObject['globalTransactionCounter']
@@ -76,7 +77,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     counterPerFile = 0 #keep track of transcations per file
     #1. WRITE ZCL T-transactions
     # print("Starting to write Z-transactions")
-    fileNumber = dump_utxos(datadir, output_dir, n, False, maxT, False, fileNumber)
+    # fileNumber = dump_utxos(datadir, output_dir, n, False, maxT, False, fileNumber)
     # print("Starting to write Z-transactions")
 
     #2. WRITE ZCL Z-transactions
