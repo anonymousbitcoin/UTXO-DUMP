@@ -76,7 +76,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     counterPerFile = 0 #keep track of transcations per file
     #1. WRITE ZCL T-transactions
     # print("Starting to write Z-transactions")
-    fileNumber = dump_utxos(datadir, output_dir, n, False, maxT, False, fileNumber) + 1
+    fileNumber = dump_utxos(datadir, output_dir, n, False, maxT, False, fileNumber)
     # print("Starting to write Z-transactions")
 
     #2. WRITE ZCL Z-transactions
