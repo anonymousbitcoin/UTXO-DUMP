@@ -59,11 +59,11 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     if z_address:
         # print("z_address: %d" % z_address)
         globalTransactionCounter = returnObject['globalTransactionCounter']
-        fileNumber = returnObject['fileNumber'] + 1
+        fileNumber = int(returnObject['fileNumber']) + 1
         returnObject = {}
         returnObject = dump_jointsplits(datadir, output_dir, file_size, maxT, globalTransactionCounter, fileNumber, magic)
         
-        print "Total Z-files written: \t%d " % returnObject['fileNumber'] - fileNumber
+        print "Total Z-files written: \t%d " % int(returnObject['fileNumber']) - fileNumber
         print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
 
         globalTransactionCounter = returnObject['globalTransactionCounter']
