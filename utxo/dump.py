@@ -117,10 +117,10 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
         #remove objects from array that were written
         joinsplits = joinsplits[counterPerFile:]
         if(len(joinsplits) == 0 and (numberFile <= numberOfFilesToRead)):
-            try 
+            try: 
                 numberFile += 1
                 joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % numberFile, magic)
-            except IOError
+            except IOError:
                 print "Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % datadir, numberFile
                 break
         counterPerFile = 0
