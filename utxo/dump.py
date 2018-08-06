@@ -124,11 +124,10 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
                 print("Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % (datadir, numberFile))
                 break
         counterPerFile = 0
-        fileNumber += 1
         f.close()
     print("##########################################")
     print 'Total Z written: \t%s' % localTotalCounter
-    return { 'globalTransactionCounter': globalTransactionCounter, 'fileNumber': fileNumber }
+    return { 'globalTransactionCounter': globalTransactionCounter, 'fileNumber': numberFile }
 
 def dump_utxos(datadir, output_dir, n, convert_segwit,
                maxT, debug, fileNum):
