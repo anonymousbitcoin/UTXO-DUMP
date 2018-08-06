@@ -63,7 +63,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
         returnObject = {}
         returnObject = dump_jointsplits(datadir, output_dir, file_size, maxT, globalTransactionCounter, fileNumber, magic)
         
-        print "Total Z-files written: \t%d " % returnObject['fileNumber']
+        print "Total Z-files written: \t%d " % returnObject['fileNumber'] - fileNumber
         print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
 
         globalTransactionCounter = returnObject['globalTransactionCounter']
@@ -93,7 +93,6 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     # print("magic")
     # print(hexlify(magic))
     joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % numberFile, magic)
-    numberFile += 1
     while len(joinsplits) != 0:
         # print('NEW FILE')
         # print(fileNumber))
@@ -118,8 +117,8 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
         #remove objects from array that were written
         joinsplits = joinsplits[counterPerFile:]
         if(len(joinsplits) == 0 and (numberFile <= numberOfFilesToRead)):
-            joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % numberFile, magic)
             numberFile += 1
+            joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % numberFile, magic)
         counterPerFile = 0
         fileNumber += 1
         f.close()
