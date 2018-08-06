@@ -73,7 +73,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
         fileNumber = returnObject['fileNumber']
 
     print "Total T+Z written: \t%d " % globalTransactionCounter
-    print "Total files created: \t", fileNumber - 1
+    print "Total files created: \t", fileNumber
     print("##########################################")
     return
 
