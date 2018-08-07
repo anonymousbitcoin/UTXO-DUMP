@@ -49,7 +49,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     print "fileNumber: ", fileNumber
     returnObject = {}
     globalTransactionCounter = 0 #keep track of total transaction 
-    fileNumber = 1 #keep track of created files
+     #keep track of created files
     # maxT = maxT #4000 
 
     #write regular utxo (t-transactions)
