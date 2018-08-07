@@ -44,7 +44,9 @@ def get_magic(network, coin):
 def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num, z_address, network, coin):
     #get magic for the provided network and coin
     magic = get_magic(network, coin)
-    fileNumber = file_num 
+    fileNumber = file_num
+    print "file_num: ", file_num
+    print "fileNumber: ", fileNumber
     returnObject = {}
     globalTransactionCounter = 0 #keep track of total transaction 
     fileNumber = 1 #keep track of created files
