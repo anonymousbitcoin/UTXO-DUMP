@@ -51,14 +51,14 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     # maxT = maxT #4000 
 
     #write regular utxo (t-transactions)
-    returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num)
+    returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, fileNumber)
     print "Total T-files written: \t%d " % returnObject['fileNumber']
     print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
     if z_address:
         globalTransactionCounter = returnObject['globalTransactionCounter']
-        fileNumber = int(returnObject['fileNumber']) + 1
+        fileNumber = int(returnObject['fileNumber'])
         returnObject = {}
-        returnObject = dump_jointsplits(datadir, output_dir, file_size, maxT, globalTransactionCounter, fileNumber, magic)
+        returnObject = dump_jointsplits(datadir, output_dir, file_size, maxT, globalTransactionCounter, fileNumber + 1, magic)
         
         print "Total Z-files written: \t%d " % (int(returnObject['fileNumber']) - int(fileNumber) + 1)
         print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
@@ -70,7 +70,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
         fileNumber = returnObject['fileNumber']
 
     print "Total T+Z written: \t%d " % globalTransactionCounter
-    print "Total files created: \t", fileNumber
+    print "Total files created: \t", fileNumber - file_num + 1
     print("##########################################")
     return
 
