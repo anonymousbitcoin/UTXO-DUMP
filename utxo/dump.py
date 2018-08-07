@@ -15,7 +15,7 @@ from blockdb import read_blockfile
 
 def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
     
-    cmd = "{} -reindex-chainstate -datadir=\"{}\" -stopatheight={}".format(
+    cmd = "{} -reindex -datadir=\"{}\" -stopatheight={}".format(
         bitcoind, bitcoind_datadir, stop_block)
     print("cmd")
     print (cmd)
