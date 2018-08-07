@@ -53,7 +53,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     #write regular utxo (t-transactions)
     returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num)
     print "Total T-files written: \t%d " % returnObject['fileNumber']
-    print  "utxo-{:05}.bin".format(0) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
+    print  "utxo-{:05}.bin".format(1) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
     if z_address:
         globalTransactionCounter = returnObject['globalTransactionCounter']
         fileNumber = int(returnObject['fileNumber']) + 1
@@ -78,7 +78,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
 def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fileNumber, magic):
     transaction = 0 #keep track of transcations per file
     transactionTotal = 0
-    numberOfFilesToRead = 2
+    numberOfFilesToRead = 20
     blkFile = 0
 
     joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % blkFile, magic)
@@ -133,7 +133,7 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         print "Reversed: "
         reversedString = hexlify(tx_hash)
         print("".join(reversed([reversedString[x:x+2] for x in range(0, len(reversedString), 2)])))
-        print()
+        print ""
         # print("Amt: \n")
         # print(amt)
         # print("Script: \n")
