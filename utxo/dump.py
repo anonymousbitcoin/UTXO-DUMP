@@ -53,7 +53,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     #write regular utxo (t-transactions)
     returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num)
     print "Total T-files written: \t%d " % returnObject['fileNumber']
-    print  "utxo-{:05}.bin".format(1) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
+    print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
     if z_address:
         globalTransactionCounter = returnObject['globalTransactionCounter']
         fileNumber = int(returnObject['fileNumber']) + 1
