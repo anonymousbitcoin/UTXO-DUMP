@@ -132,13 +132,14 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
 
     for value in ldb_iter(datadir):
         tx_hash, height, index, amt, script = value
-        print "Height: %d" % height
-        # print "Original: "
-        # print(hexlify(tx_hash))
-        print "Reversed: "
-        reversedString = hexlify(tx_hash)
-        print("".join(reversed([reversedString[x:x+2] for x in range(0, len(reversedString), 2)])))
-        print ""
+        if debug:
+            print "Height: %d" % height
+            # print "Original: "
+            # print(hexlify(tx_hash))
+            print "Reversed: "
+            reversedString = hexlify(tx_hash)
+            print("".join(reversed([reversedString[x:x+2] for x in range(0, len(reversedString), 2)])))
+            print ""
         # print("Amt: \n")
         # print(amt)
         # print("Script: \n")
