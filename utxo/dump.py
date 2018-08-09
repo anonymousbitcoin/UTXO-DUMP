@@ -15,7 +15,7 @@ from blockdb import read_blockfile
 
 def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
     
-    cmd = "{} -reindex -datadir=\"{}\" -stopatheight={}".format(
+    cmd = "{} -reindex-chainstate -datadir=\"{}\" -stopatheight={}".format(
         bitcoind, bitcoind_datadir, stop_block)
     print("cmd")
     print (cmd)
@@ -53,9 +53,9 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     # maxT = maxT #4000 
 
     #write regular utxo (t-transactions)
-    # returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, fileNumber)
-    returnObject['fileNumber'] = fileNumber
-    returnObject['globalTransactionCounter'] = 0
+    returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, fileNumber)
+    # returnObject['fileNumber'] = fileNumber
+    # returnObject['globalTransactionCounter'] = 0
 
     print "Total T-files written: \t%d " % returnObject['fileNumber']
     print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
