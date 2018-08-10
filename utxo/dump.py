@@ -108,7 +108,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
         if(len(joinsplits) == 0 and (blkFile <= numberOfFilesToRead)):
             try: 
                 blkFile += 1
-                joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % blkFile, magic)
+                joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
             except IOError:
                 print("Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % (datadir, blkFile))
                 break
