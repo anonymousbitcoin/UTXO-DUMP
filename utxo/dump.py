@@ -86,7 +86,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     numberOfFilesToRead = 20
     blkFile = 0
 
-    joinsplits = read_blockfile(datadir + "/blocks/blk" + '{:05}'.format(blkFile) + ".dat", magic)
+    joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
     while len(joinsplits) != 0:
         f = new_utxo_file(output_dir, fileNumber)  #create and open a new file
         for value in joinsplits:
