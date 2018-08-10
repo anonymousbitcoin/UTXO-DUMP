@@ -41,7 +41,7 @@ def get_magic(network, coin):
     # mainnetBitcoinMagic = bytearray.fromhex('f9 be b4 d9')
     # testnetBitcoinMagic = bytearray.fromhex('0b 11 09 07')
 
-def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num, z_address, network, coin):
+def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num, z_address, network, coin, t_address):
     #get magic for the provided network and coin
     magic = get_magic(network, coin)
     fileNumber = file_num
@@ -49,16 +49,18 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     print "fileNumber: ", fileNumber
     returnObject = {}
     globalTransactionCounter = 0 #keep track of total transaction 
-     #keep track of created files
+    #keep track of created files
     # maxT = maxT #4000 
 
     #write regular utxo (t-transactions)
-    # returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, fileNumber)
-    returnObject['fileNumber'] = fileNumber
-    returnObject['globalTransactionCounter'] = 0
-
-    print "Total T-files written: \t%d " % returnObject['fileNumber']
-    print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
+    if(t_address):
+        returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, fileNumber)
+        print "Total T-files written: \t%d " % returnObject['fileNumber']
+        print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
+    else:
+        returnObject['fileNumber'] = fileNumber
+        returnObject['globalTransactionCounter'] = 0
+    
     if z_address:
         globalTransactionCounter = returnObject['globalTransactionCounter']
         fileNumber = int(returnObject['fileNumber'])
@@ -108,7 +110,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
         if(len(joinsplits) == 0 and (blkFile <= numberOfFilesToRead)):
             try: 
                 blkFile += 1
-                joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % blkFile, magic)
+                joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
             except IOError:
                 print("Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % (datadir, blkFile))
                 break
