@@ -53,9 +53,9 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     # maxT = maxT #4000 
 
     #write regular utxo (t-transactions)
-    returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, fileNumber)
-    # returnObject['fileNumber'] = fileNumber
-    # returnObject['globalTransactionCounter'] = 0
+    # returnObject = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, fileNumber)
+    returnObject['fileNumber'] = fileNumber
+    returnObject['globalTransactionCounter'] = 0
 
     print "Total T-files written: \t%d " % returnObject['fileNumber']
     print  "utxo-{:05}.bin".format(fileNumber) + " - utxo-{:05}.bin".format(returnObject['fileNumber'])
@@ -86,7 +86,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
     numberOfFilesToRead = 20
     blkFile = 0
 
-    joinsplits = read_blockfile(datadir + "/blocks/blk0000%i.dat" % blkFile, magic)
+    joinsplits = read_blockfile(datadir + "/blocks/blk%05i.dat" % blkFile, magic)
     while len(joinsplits) != 0:
         f = new_utxo_file(output_dir, fileNumber)  #create and open a new file
         for value in joinsplits:
