@@ -1,5 +1,5 @@
 ## Python Utility for creating UTXO snapshot from Bitcoin and Zclassic mainnet's
-=======
+
 To run, you should run the following commands
 
 
