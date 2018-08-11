@@ -18,7 +18,6 @@ parser.add_argument('--bitcoind')
 parser.add_argument('--blockheight', type=int)
 parser.add_argument('--chainstate_version', type=int, default=15)
 
-# ./dump.py --bitcoind_datadir="/Users/nlevo/Library/Application Support/Bitcoin" z-dump/anon/mainnet --nperfile=1000 --transform_segwit=0 --reindex=1 --bitcoind='/Users/nlevo/Desktop/Crypto/bitcoin/src/bitcoind' --blockheight=10 --verbose=1 --chainstate_version=15 --z_address=0 --coin='bitcoin' --file_num=1 --network='mainnet' --maxutxos=35000
 
 # anon
 parser.add_argument('--z_address', type=int, default=0)
@@ -46,16 +45,6 @@ if not isdir(args.bitcoind_datadir):
 if(args.reindex or args.bitcoind or args.blockheight):
     assert args.reindex and args.bitcoind is not None and args.blockheight >= 0
     snap_utxos(args.bitcoind, args.bitcoind_datadir, args.blockheight)
-
-# dump_utxos(args.bitcoind_datadir, args.utxo_dir, args.nperfile, args.transform_segwit, args.maxutxos, debug=args.verbose, vmcp_file='vmcp.csv')
-# print("z_address2")
-# print(args.z_address)
-# print("transform_segwit")
-# print(args.transform_segwit)
-# print("coin")
-# print(args.coin)
-# print("network")
-# print(args.network)
 
 
 dump_transactions(datadir=args.bitcoind_datadir, output_dir=args.utxo_dir, file_size=args.nperfile, convert_segwit=args.transform_segwit, maxT=args.maxutxos, debug=args.verbose, file_num=args.file_num, z_address=args.z_address, network=args.network, coin=args.coin, t_address=args.t_address)

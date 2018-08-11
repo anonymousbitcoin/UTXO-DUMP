@@ -36,10 +36,6 @@ def get_magic(network, coin):
             return bytearray.fromhex('f9 be b4 d9') #mainnetBitcoinMagic
     assert 0, "The provided network or coin name aren't supported. Use the following network: 'mainnet' or 'testnet'; coin: 'zcl' or 'bitcoin' "
 
-    # mainnetZCLMagic = bytearray.fromhex('24 e9 27 64') 
-    # testnetZCLMagic = bytearray.fromhex('fa 1a f9 bf')
-    # mainnetBitcoinMagic = bytearray.fromhex('f9 be b4 d9')
-    # testnetBitcoinMagic = bytearray.fromhex('0b 11 09 07')
 
 def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num, z_address, network, coin, t_address):
     #get magic for the provided network and coin
@@ -50,7 +46,6 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     returnObject = {}
     globalTransactionCounter = 0 #keep track of total transaction 
     #keep track of created files
-    # maxT = maxT #4000 
 
     #write regular utxo (t-transactions)
     if(t_address):
@@ -103,10 +98,10 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             transaction += 1
             transactionTotal += 1
             if maxT != 0 and transaction >= maxT:
-                fileNumber += 1
                 break
         #remove objects from array that were written
         joinsplits = joinsplits[transaction:]
+        transaction = 0
         if(len(joinsplits) == 0 and (blkFile <= numberOfFilesToRead)):
             try: 
                 blkFile += 1
@@ -114,7 +109,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, globalTransactionCounter, fil
             except IOError:
                 print("Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % (datadir, blkFile))
                 break
-        transaction = 0
+        fileNumber += 1
         f.close()
     print("##########################################")
     print 'Total Z written: \t%s' % transactionTotal
@@ -130,22 +125,17 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
     print('new file')
     f = new_utxo_file(output_dir, k)
     print('new_utxo_file path: ', f)
-    # print('value length: %d' % len(ldb_iter(datadir)))
 
     for value in ldb_iter(datadir):
         tx_hash, height, index, amt, script = value
+        
         if debug:
             print "Height: %d" % height
-            # print "Original: "
-            # print(hexlify(tx_hash))
             print "Reversed: "
             reversedString = hexlify(tx_hash)
             print("".join(reversed([reversedString[x:x+2] for x in range(0, len(reversedString), 2)])))
             print ""
-        # print("Amt: \n")
-        # print(amt)
-        # print("Script: \n")
-        # print(script)
+
         if convert_segwit:
             script = unwitness(script, debug)
 
@@ -162,49 +152,13 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         j += 1
         if i >= maxT:
             f.close()
-            # print("Saved T-transactions: %d in file# %d" % (i,k))
             k += 1
-            # print('new file: {}'.format(k))
             i = 0
             f = new_utxo_file(output_dir, k)
 
-        # if maxT != 0 and i >= maxT:
-        #     break
-    # print("Saved T-transactions: %d in file# %d" % (j, k-1 if k==0 else k))
     f.close()
     print("##########################################")
     print("Total T written: \t%d" % j)
     print("##########################################")
     return { 'globalTransactionCounter': j, 'fileNumber': k }
 
-
-
-
-
-    
-    # print 'BEFORE WRITING TO vmcp_file'
-    # print(output_dir)
-    # write_vmcp_data(output_dir, k + 1, vmcp_file)
-
-# print(int(stringRes.encode('hex'), 16))
-# if i ==3:
-    #     f.close()
-    #     break
-# if i % n == 0:
-#     k += 1
-#     print('new file: {}'.format(k))
-
-#   t = open("z-dump/anon/testnet/utxo-00002.bin", "rb")
-
-#     while True:
-#         # print(numberWrites)
-#         stringRes=t.read(32)
-#         # print(stringRes)
-#         # print(int(stringRes,2))
-#         if len(stringRes) <= 1:
-#             break
-#         print(int(stringRes,2))
-
-        
-#         thing = t.read(int(stringRes,2))
-#         print(hexlify(thing))
