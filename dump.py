@@ -22,6 +22,7 @@ parser.add_argument('--chainstate_version', type=int, default=15)
 
 # anon
 parser.add_argument('--z_address', type=int, default=0)
+parser.add_argument('--t_address', type=int, default=0)
 parser.add_argument('--coin', type=str, default="zcl")
 parser.add_argument('--file_num', type=int, default=1)
 parser.add_argument('--network', type=str, default="mainnet")
@@ -57,4 +58,4 @@ if(args.reindex or args.bitcoind or args.blockheight):
 # print(args.network)
 
 
-dump_transactions(datadir=args.bitcoind_datadir, output_dir=args.utxo_dir, file_size=args.nperfile, convert_segwit=args.transform_segwit, maxT=args.maxutxos, debug=args.verbose, file_num=args.file_num, z_address=args.z_address, network=args.network, coin=args.coin)
+dump_transactions(datadir=args.bitcoind_datadir, output_dir=args.utxo_dir, file_size=args.nperfile, convert_segwit=args.transform_segwit, maxT=args.maxutxos, debug=args.verbose, file_num=args.file_num, z_address=args.z_address, network=args.network, coin=args.coin, t_address=args.t_address)
