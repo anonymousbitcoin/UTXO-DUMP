@@ -47,6 +47,6 @@ For example,
 '--network'='mainnet' or '--network'='testnet' 
 
 
-```./dump.py --bitcoind_datadir="/Users/nlevo/Desktop/Crypto/zcl-test-blocks-2/testnet3" /Users/nlevo/Desktop/Crypto/zcl-test-blocks-2/result --verbose=1 --reindex=1 --bitcoind /Users/nlevo/Desktop/Crypto/bitcoin/src/bitcoind --blockheight=10000 --maxutxos=3500 --file_num=1 --z_address=1 --network=testnet --coin=zcl```
+```./dump.py --bitcoind_datadir="/home/user/zcl-test-blocks-2/testnet3" /home/user/zcl-test-blocks-2/result --verbose=1 --reindex=1 --bitcoind /home/user/bitcoin/src/bitcoind --blockheight=10000 --maxutxos=3500 --file_num=1 --z_address=1 --network=testnet --coin=zcl```
 
 
