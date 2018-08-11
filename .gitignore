@@ -1,9 +1,5 @@
 *.pyc
-<<<<<<< HEAD
-
-=======
 .vscode
->>>>>>> 0475d16b1e0db84a62625fba072e0c6cd677b17c
 *~
 *.dat
 *.ldb
