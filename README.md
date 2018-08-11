@@ -1,4 +1,16 @@
 ## Python Utility for creating UTXO snapshot from Bitcoin and Zclassic mainnet's
+=======
+To run, you should run the following commands
+
+
+This is a python utility that will create a snapshot of Bitcoin and Zclassic's Unspent Transaction Outputs (UTXO). 
+
+Below are some of the following commands/arguments you can pass to the python utility 
+
+```"--bitcoind_datadir={here you should pass the path to your local bitcoin data directory where bitcoin blocks are stored}"```
+For example, 
+--bitcoind_datadir="/root/.bitcoin"
+
 
 
 This is a python utility that will create a snapshot of Bitcoin and Zclassic's Unspent Transaction Outputs (UTXO). 
