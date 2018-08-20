@@ -31,9 +31,6 @@ parser.add_argument('--maxutxos', type=int, default=0)
 
 args = parser.parse_args()
 
-print("TEST")
-print(args.bitcoind_datadir)
-# print(args.utxo_dir)
 
 if not isdir(args.utxo_dir):
     raise Exception("invalid utxo_dir")
@@ -44,16 +41,6 @@ if not isdir(args.bitcoind_datadir):
 if(args.reindex or args.bitcoind or args.blockheight):
     assert args.reindex and args.bitcoind is not None and args.blockheight >= 0
     snap_utxos(args.bitcoind, args.bitcoind_datadir, args.blockheight)
-
-# dump_utxos(args.bitcoind_datadir, args.utxo_dir, args.nperfile, args.transform_segwit, args.maxutxos, debug=args.verbose, vmcp_file='vmcp.csv')
-# print("z_address2")
-# print(args.z_address)
-# print("transform_segwit")
-# print(args.transform_segwit)
-# print("coin")
-# print(args.coin)
-# print("network")
-# print(args.network)
 
 
 dump_transactions(datadir=args.bitcoind_datadir, output_dir=args.utxo_dir, file_size=args.nperfile, convert_segwit=args.transform_segwit, maxT=args.maxutxos, debug=args.verbose, file_num=args.file_num, z_address=args.z_address, network=args.network, coin=args.coin, t_address=args.t_address)
