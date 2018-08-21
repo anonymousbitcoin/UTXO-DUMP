@@ -38,12 +38,12 @@ def get_magic(network, coin):
     assert 0, "The provided network or coin name aren't supported. Use the following network: 'mainnet' or 'testnet'; coin: 'zcl' or 'bitcoin' "
 
 
-def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num, z_address, network, coin, t_address):
+def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num_start, z_address, network, coin, t_address):
     
     magic = get_magic(network, coin) #get magic for the provided network and coin
     trans_total = 0 #keep track of total transaction 
     ret = {}
-    
+    file_num = file_num_start
     #write regular utxo (t-transactions)
     if(t_address):
         ret = dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num)
@@ -70,7 +70,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
         file_num = ret['file_num']
 
     print "Total T+Z written: \t%d " % trans_total
-    print "Total files created: \t", file_num
+    print "Total files created: \t", file_num - file_num_start
     print("##########################################")
     return
 
