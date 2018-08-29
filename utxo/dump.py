@@ -30,11 +30,15 @@ def get_magic(network, coin):
             return bytearray.fromhex('fa 1a f9 bf') #testnetZCLMagic
         elif coin == "bitcoin":
             return bytearray.fromhex('0b 11 09 07') #testnetBitcoinMagic
+        elif coin == "anon":
+            return bytearray.fromhex('7a 74 8d 38') #testnetAnonMagic
     elif network == "mainnet":
         if coin == "zcl":
             return bytearray.fromhex('24 e9 27 64') #mainnetZCLMagic
         elif coin == "bitcoin":
             return bytearray.fromhex('f9 be b4 d9') #mainnetBitcoinMagic
+        elif coin == "anon":
+            return bytearray.fromhex('83 d8 47 a7') #mainnetAnonMagic
     assert 0, "The provided network or coin name aren't supported. Use the following network: 'mainnet' or 'testnet'; coin: 'zcl' or 'bitcoin' "
 
 
@@ -102,7 +106,15 @@ def dump_jointsplits(datadir, output_dir, n, maxT, fileNumber, magic):
 
             hashStore[md5_hash] = 1
             f.write(lengthStr) #write length of the transaction
-            f.write(value)#write actual z-utxo 
+            f.write(value)#write actual z-utxo
+            # append first sha256(transaction + its length)
+            sha = hashlib.sha256()
+            sha.update(value + lengthStr)
+            sha256_hash = sha.digest()
+            print("SHA256: ", sha256_hash)
+            f.write(sha256_hash)
+            f.close()
+            return
             trans_counter_perfile += 1
             trans_z_total += 1
 
@@ -122,7 +134,16 @@ def dump_jointsplits(datadir, output_dir, n, maxT, fileNumber, magic):
                 print("Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % (datadir, blkFile))
                 break
         file_num += 1
+        # append 1st 32 bits of sha256 hash of the whole file (checksum)
+        # sha = hashlib.sha256()
+        # sha.update(value)
+        # sha256_hash = "{0:b}".format(len(sha256_hash))   sha.digest()
+        # lengthStr = 
         f.close()
+    # append 1st 32 bits of sha256 hash of the whole file (checksum)
+    # sha = hashlib.sha256()
+    # sha.update(value)
+    # sha256_hash = sha.digest()
     f.close()
     
     print("##########################################")
