@@ -15,7 +15,7 @@ from blockdb import read_blockfile
 import hashlib
 
 def snap_utxos(bitcoind, bitcoind_datadir, stop_block):
-    
+
     cmd = "{} -reindex-chainstate -datadir=\"{}\" -stopatheight={}".format(
         bitcoind, bitcoind_datadir, stop_block)
     print("cmd")
@@ -43,7 +43,7 @@ def get_magic(network, coin):
 
 
 def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debug, file_num_start, z_address, network, coin, t_address):
-    
+
     magic = get_magic(network, coin) #get magic for the provided network and coin
 
     ret = {
@@ -60,9 +60,9 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
         ret.update(dump_utxos(datadir, output_dir, file_size, convert_segwit, maxT, debug, ret['file_num_start']))
         print "Total T-files written: \t%d " % ret['t_files_written']
         print  "utxo-{:05}.bin".format(int(file_num_start)) + " - utxo-{:05}.bin".format(ret['file_num_start'] + ret['t_files_written'] - 1)
-    
+
     if z_address:
-        ret.update(dump_jointsplits(datadir, output_dir, file_size, maxT, (int(ret['file_num_start']) + int(ret['t_files_written'])), magic))
+        ret.update(dump_joinsplits(datadir, output_dir, file_size, maxT, (int(ret['file_num_start']) + int(ret['t_files_written'])), magic))
         print "Total Z-files written: \t%d " % ret['z_files_written']
         print  "utxo-{:05}.bin".format(ret['file_num_start'] + ret['t_files_written']) + " - utxo-{:05}.bin".format(ret['file_num_start'] + ret['t_files_written'] + ret['z_files_written'] - 1)
 
@@ -72,7 +72,7 @@ def dump_transactions(datadir, output_dir, file_size, convert_segwit, maxT, debu
     return
 
 
-def dump_jointsplits(datadir, output_dir, n, maxT, fileNumber, magic):
+def dump_joinsplits(datadir, output_dir, n, maxT, fileNumber, magic):
     trans_counter_perfile = 0 #keep track of transcations per file
     trans_z_total = 0
     maxBlockFile = 9999
@@ -101,7 +101,7 @@ def dump_jointsplits(datadir, output_dir, n, maxT, fileNumber, magic):
             if md5_hash in hashStore:
                 print("Found a duplicate transaction...skipping.")
                 duplicates += 1
-                joinsplits = joinsplits[1:] #remove duplicate 
+                joinsplits = joinsplits[1:] #remove duplicate
                 continue
 
             hashStore[md5_hash] = 1
@@ -120,12 +120,12 @@ def dump_jointsplits(datadir, output_dir, n, maxT, fileNumber, magic):
 
             if maxT != 0 and trans_counter_perfile >= maxT:
                 break
-                
+
         #remove objects from array that were written
         joinsplits = joinsplits[trans_counter_perfile:]
         trans_counter_perfile = 0
         if(len(joinsplits) == 0 and (blkFile <= maxBlockFile)):
-            try: 
+            try:
                 blkFile += 1
                 print("Extracting joinsplits from " + datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat")
                 joinsplits = read_blockfile(datadir + "/blocks/blk" + '{0:0>5}'.format(blkFile) + ".dat", magic)
@@ -138,14 +138,14 @@ def dump_jointsplits(datadir, output_dir, n, maxT, fileNumber, magic):
         # sha = hashlib.sha256()
         # sha.update(value)
         # sha256_hash = "{0:b}".format(len(sha256_hash))   sha.digest()
-        # lengthStr = 
+        # lengthStr =
         f.close()
     # append 1st 32 bits of sha256 hash of the whole file (checksum)
     # sha = hashlib.sha256()
     # sha.update(value)
     # sha256_hash = sha.digest()
     f.close()
-    
+
     print("##########################################")
     print 'Found duplicates: \t%d' % duplicates
     print 'Total Z written: \t%s' % trans_z_total
@@ -166,7 +166,7 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
 
     for value in ldb_iter(datadir):
         tx_hash, height, index, amt, script = value
-        
+
         if debug:
             print "Height: %d" % height
             print "Reversed: "
