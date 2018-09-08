@@ -43,4 +43,4 @@ if(args.reindex or args.bitcoind or args.blockheight):
     snap_utxos(args.bitcoind, args.bitcoind_datadir, args.blockheight)
 
 
-dump_transactions(datadir=args.bitcoind_datadir, output_dir=args.utxo_dir, file_size=args.nperfile, convert_segwit=args.transform_segwit, maxT=args.maxutxos, debug=args.verbose, file_num=args.file_num, z_address=args.z_address, network=args.network, coin=args.coin, t_address=args.t_address)
+dump_transactions(datadir=args.bitcoind_datadir, output_dir=args.utxo_dir, file_size=args.nperfile, convert_segwit=args.transform_segwit, maxT=args.maxutxos, debug=args.verbose, file_num_start=args.file_num, z_address=args.z_address, network=args.network, coin=args.coin, t_address=args.t_address)
