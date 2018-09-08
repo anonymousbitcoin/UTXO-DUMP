@@ -109,12 +109,12 @@ def dump_joinsplits(datadir, output_dir, n, maxT, fileNumber, magic):
             f.write(value)#write actual z-utxo
             # append first sha256(transaction + its length)
             sha = hashlib.sha256()
-            sha.update(value + lengthStr)
+            sha.update(lengthStr + value)
             sha256_hash = sha.digest()
-            print("SHA256: ", sha256_hash)
-            f.write(sha256_hash)
-            f.close()
-            return
+            # print("SHA256: ", hexlify(sha256_hash))
+            # print("SHA256: ", hexlify(sha256_hash[::-1]))
+            f.write(sha256_hash[::-1])
+
             trans_counter_perfile += 1
             trans_z_total += 1
 
@@ -132,19 +132,10 @@ def dump_joinsplits(datadir, output_dir, n, maxT, fileNumber, magic):
                 print()
             except IOError:
                 print("Oops! File %s/blocks/blk0000%i.dat doesn't exist..." % (datadir, blkFile))
+                f.close()
                 break
         file_num += 1
-        # append 1st 32 bits of sha256 hash of the whole file (checksum)
-        # sha = hashlib.sha256()
-        # sha.update(value)
-        # sha256_hash = "{0:b}".format(len(sha256_hash))   sha.digest()
-        # lengthStr =
         f.close()
-    # append 1st 32 bits of sha256 hash of the whole file (checksum)
-    # sha = hashlib.sha256()
-    # sha.update(value)
-    # sha256_hash = sha.digest()
-    f.close()
 
     print("##########################################")
     print 'Found duplicates: \t%d' % duplicates
@@ -177,13 +168,16 @@ def dump_utxos(datadir, output_dir, n, convert_segwit,
         if convert_segwit:
             script = unwitness(script, debug)
 
-        # if debug:
-        #     print(k, i, hexlify(tx_hash[::-1]), height, index,
-        #           amt, hexlify(script))
-        #     print(value)
-
         f.write(struct.pack('<QQ', amt, len(script)))
         f.write(script)
+
+        # append first sha256(transaction + its length)
+        sha = hashlib.sha256()
+        sha.update(struct.pack('<QQ', amt, len(script)) + script)
+        sha256_hash = sha.digest()
+        # print("SHA256: ", hexlify(sha256_hash))
+        # print("SHA256: ", hexlify(sha256_hash[::-1]))
+        f.write(sha256_hash[::-1])
         f.write('\n')
 
         i += 1
